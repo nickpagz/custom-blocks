@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "rbf-blocks/rbf-parent-post-title",
+  "version": "0.1.0",
+  "title": "Ruby Bridges Parent Post Title",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "Custom Post Title block to display the parent page's title, or the current page title if the page is not a child page.",
+  "supports": {
+    "html": false
+  },
+  "textdomain": "rbf-parent-post-title",
+  "editorScript": "file:../../../build/blocks/rbf-parent-post-title/index.js",
+  "editorStyle": "file:../../../build/blocks/rbf-parent-post-title/index.css",
+  "style": "file:../../../build/blocks/rbf-parent-post-title/style-index.css"
+}
