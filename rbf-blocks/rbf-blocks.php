@@ -21,6 +21,21 @@
  * @see https://developer.wordpress.org/reference/functions/register_block_type/
  */
 function rbf_blocks_init() {
-	register_block_type( __DIR__ . '/build' );
+	require_once trailingslashit( __DIR__ ) . 'src/blocks/rbf-parent-post-title/index.php';
+	register_block_type(
+		trailingslashit( __DIR__ ) . 'build/blocks/rbf-parent-post-title',
+		array(
+			'render_callback' => 'render_block_rbf_post_title',
+		)
+	);
+
+	require_once trailingslashit( __DIR__ ) . 'src/blocks/rbf-child-post-title/index.php';
+	register_block_type(
+		trailingslashit( __DIR__ ) . 'build/blocks/rbf-child-post-title',
+		array(
+			'render_callback' => 'render_block_rbf_child_post_title',
+		)
+	);
 }
+
 add_action( 'init', 'rbf_blocks_init' );

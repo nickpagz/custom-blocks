@@ -1,41 +1,101 @@
 /**
- * Retrieves the translation of text.
- *
- * @see https://developer.wordpress.org/block-editor/packages/packages-i18n/
+ * External dependencies
  */
+import classnames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
+import {
+    AlignmentControl,
+    BlockControls,
+    InspectorControls,
+    useBlockProps,
+    PlainText,
+} from '@wordpress/block-editor';
+import { ToggleControl, TextControl, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useEntityProp } from '@wordpress/core-data';
+import HeadingLevelDropdown from '@wordpress/block-library';
 
-/**
- * React hook that is used to mark the block wrapper element.
- * It provides all the necessary props like the class name.
- *
- * @see https://developer.wordpress.org/block-editor/packages/packages-block-editor/#useBlockProps
- */
-import { useBlockProps } from '@wordpress/block-editor';
+export default function RbfPostTitleEdit( {
+    attributes: { level, textAlign, isLink, rel, linkTarget },
+    setAttributes,
+    context: { postType, postId, queryId },
+} ) {
+    const TagName = 0 === level ? 'p' : 'h' + level;
+    const isDescendentOfQueryLoop = Number.isFinite( queryId );
+    const [ rawTitle = '', setTitle, fullTitle ] = useEntityProp(
+        'postType',
+        postType,
+        'title',
+        postId
+    );
+    const [ link ] = useEntityProp( 'postType', postType, 'link', postId );
+    const blockProps = useBlockProps( {
+        className: classnames( {
+            [ `has-text-align-${ textAlign }` ]: textAlign,
+        } ),
+    } );
 
-/**
- * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
- * Those files can contain any CSS code that gets applied to the editor.
- *
- * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
- */
-import './editor.scss';
+    let titleElement = (
+        <TagName { ...blockProps }>{ __( 'Post Title' ) }</TagName>
+    );
 
-/**
- * The edit function describes the structure of your block in the context of the
- * editor. This represents what the editor will render when the block is used.
- *
- * @see https://developer.wordpress.org/block-editor/developers/block-api/block-edit-save/#edit
- *
- * @return {WPElement} Element to render.
- */
-export default function Edit() {
-	return (
-		<p { ...useBlockProps() }>
-			{ __(
-				'Rbf Child Post Title – hello from the editor!',
-				'rbf-child-post-title'
-			) }
-		</p>
-	);
+    if ( postType && postId ) {
+        titleElement =
+            ! isDescendentOfQueryLoop ? (
+                <PlainText
+                    tagName={ TagName }
+                    placeholder={ __( 'No Title' ) }
+                    value={ rawTitle }
+                    onChange={ setTitle }
+                    __experimentalVersion={ 2 }
+                    { ...blockProps }
+                />
+            ) : (
+                <TagName
+                    { ...blockProps }
+                    dangerouslySetInnerHTML={ { __html: fullTitle?.rendered } }
+                />
+            );
+    }
+
+    if ( isLink && postType && postId ) {
+        titleElement =
+            ! isDescendentOfQueryLoop ? (
+                <TagName { ...blockProps }>
+                    <PlainText
+                        tagName="a"
+                        href={ link }
+                        target={ linkTarget }
+                        rel={ rel }
+                        placeholder={
+                            ! rawTitle.length ? __( 'No Title' ) : null
+                        }
+                        value={ rawTitle }
+                        onChange={ setTitle }
+                        __experimentalVersion={ 2 }
+                    />
+                </TagName>
+            ) : (
+                <TagName { ...blockProps }>
+                    <a
+                        href={ link }
+                        target={ linkTarget }
+                        rel={ rel }
+                        onClick={ ( event ) => event.preventDefault() }
+                        dangerouslySetInnerHTML={ {
+                            __html: fullTitle?.rendered,
+                        } }
+                    />
+                </TagName>
+            );
+    }
+
+    return (
+        <>
+            { titleElement }
+        </>
+    );
 }

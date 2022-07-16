@@ -14,13 +14,10 @@
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start"
 	},
-	"dependencies": {
-		"@wordpress/block-editor": "^7.0.1",
-		"@wordpress/blocks": "^11.0.1",
-		"@wordpress/i18n": "^4.2.1"
-	},
 	"devDependencies": {
-		"@wordpress/scripts": "^23.5.0",
-		"copy-webpack-plugin": "^6.4.1"
+		"@wordpress/scripts": "^23.5.0"
+	},
+	"dependencies": {
+		"@wordpress/block-library": "^7.10.0"
 	}
 }
